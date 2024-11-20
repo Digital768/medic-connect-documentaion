@@ -1,0 +1,57 @@
+---
+title: Excel Template Download
+description: A guide in my new Starlight docs site.
+---
+
+import { Code, FileTree } from "@astrojs/starlight/components";
+
+**Description:** Downloads an empty excel request file.
+
+<FileTree>
+- routes
+  - **api.excel-template-download.ts**
+</FileTree>
+
+## Expected input
+
+---
+
+request type Request contains formData of the user language
+
+<Code
+  title="Excel Download Api Request Json"
+  lang="json"
+  code={`
+    {
+       "language": string
+    }
+    `}
+/>
+
+
+## Expected return
+
+---
+
+<Code
+  title="Excel Download Api Response"
+  lang="python"
+  
+  code={`
+    return new Response(fileData, { headers });
+    `}
+
+/>
+
+### Valid response
+
+###### Body
+The function returns the file with the headers:
+
+###### Status
+
+### Exception response
+
+###### Body
+
+###### Status

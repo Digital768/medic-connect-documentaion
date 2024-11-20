@@ -1,0 +1,138 @@
+---
+title: Excel Upload
+description: A guide in my new Starlight docs site.
+
+---
+
+import { Code, FileTree } from "@astrojs/starlight/components";
+
+
+**Description:** Recieves an excel file and sends it the <a href = '/function-app/functions/excel-request/' target="_blank">excel function</a> in the function app.
+
+<FileTree>
+- routes
+  - **api.excel-upload.ts**
+</FileTree>
+
+## Expected input
+
+---
+
+request type Request contains formData of hospital id and an excel file 
+
+<Code
+  title="Excel Upload Api Response"
+  lang="json"
+  code={`
+    {
+    try {
+        const fetchResponse = await fetch(AZURE_EXCEL_URL, requestInit);
+        if (!fetchResponse.ok) {
+        try {
+            console.error(
+            "Failed to upload file: {fetchResponse.status} {fetchResponse.statusText}",
+            );
+        } catch {
+            console.error(
+            "Failed to upload file: {fetchResponse.status} {fetchResponse.statusText}",
+            );
+        }
+
+        return redirectWithToast('/admin/home/all', {
+            title: 'could_not_create_requests',
+            type: 'error',
+            messages: [
+            {
+                description: "excel_requests_upload_connection_error",
+            },
+            ],
+        });
+        }
+
+        const {
+        total_created: createdRequestsNumber,
+        total_sent: totalRequestsSent,
+        failed: faildRequests,
+        } = await fetchResponse.json();
+
+        if (fetchResponse.ok)
+        if (faildRequests.length === 0)
+            return redirectWithToast('/admin/home/all', {
+            title: 'requests_created',
+            type: 'success',
+            messages: [
+                {
+                description: "requests_create_success",
+                options: { count: createdRequestsNumber },
+                },
+            ],
+            });
+        else
+            return redirectWithToast('/admin/home/all', {
+            title: 'could_not_create_requests',
+            type: 'error',
+            messages: [
+                {
+                description: "requests_create_success",
+                options: { count: createdRequestsNumber },
+                },
+                {
+                description: "requests_create_failed",
+                options: { count: faildRequests.length },
+                },
+                ...faildRequests.map((reqRow: any) => ({
+                description: 'failed_request_info',
+                options: {
+                    citizenId: reqRow.citizenId,
+                    rowNumber: reqRow.index + 2,
+                },
+                })),
+            ],
+            });
+        else
+        return redirectWithToast('/admin/home/all', {
+            title: 'error_uploading_to_azure',
+            type: 'error',
+            messages: [
+            {
+                description: "excel_requests_upload_error",
+            },
+            ],
+        });
+    } catch (error) {
+        console.log(error);
+        return redirectWithToast('/admin/home/all', {
+        title: 'could_not_create_requests',
+        type: 'error',
+        messages: [
+            {
+            description: "excel_requests_upload_connection_error",
+            },
+        ],
+        });
+        }
+    }
+    `}
+/>
+
+
+## Expected return
+
+---
+
+### Valid response
+
+###### Body
+The function returns a toast with information about the upload result
+
+###### Status
+200 OK
+
+### Exception response
+
+###### Body
+The function returns a toast with information about error that had occured
+
+###### Status
+
+response status code

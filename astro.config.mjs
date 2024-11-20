@@ -6,21 +6,18 @@ import tailwind from '@astrojs/tailwind';
 export default defineConfig({
 	integrations: [
 		starlight({
-			title: 'Docs with Tailwind',
+			title: 'Home',
 			social: {
-				github: 'https://github.com/withastro/starlight',
+				github: 'https://portal.azure.com/#home',
 			},
 			sidebar: [
 				{
-					label: 'Guides',
-					items: [
-						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', link: '/guides/example/' },
-					],
+					label: 'Azure Web App',
+					autogenerate: { directory: 'azure web app', },
 				},
 				{
-					label: 'Reference',
-					autogenerate: { directory: 'reference' },
+					label: 'Function App',
+					autogenerate: { directory: 'function app' },
 				},
 			],
 			customCss: ['./src/tailwind.css'],

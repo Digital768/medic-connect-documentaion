@@ -1,0 +1,100 @@
+---
+title: Excel Request
+description: A guide in my new Starlight docs site.
+---
+
+import { Code } from "@astrojs/starlight/components";
+
+**Type:** Http trigger.
+
+**Auth Level:** FUNCTION.
+
+**Description:** Recieves an excel file and converts its content to requests in the db.
+
+<Code
+  title="Excel Request"
+  lang="python"
+  
+  code={`
+    @app.route(route="excel-request", auth_level=func.AuthLevel.FUNCTION)
+    def excel_request(req: func.HttpRequest) -> func.HttpResponse:
+    `}
+></Code>
+
+## Expected input
+
+---
+
+req type func.HttpRequest contains json, the user who sent the request and the hospital
+
+<Code
+  title="Excel Request json"
+  lang="python"
+  
+  code={`
+    {
+      "hospitalId": number,
+      "userId": number,
+      "file": file,
+    }
+    `}
+/>
+
+## Expected return
+
+---
+
+<Code
+  title="Excel Request response"
+  lang="python"
+  
+  code={`
+      try:
+        total_requests_created, total_requests_sent, failed_requests = (
+            send_excel_requests(file, hospital_id, user_id)
+        )
+
+        return func.HttpResponse(
+            json.dumps(
+                {
+                    "total_created": total_requests_created,
+                    "total_sent": total_requests_sent,
+                    "failed": failed_requests,
+                }
+            ),
+            status_code=200,
+        )
+    except Exception as e:
+        logging.error(f"Error {e}")
+        return func.HttpResponse(
+            json.dumps(
+                {
+                    "error": e,
+                }
+            ),
+            status_code=500,
+        )
+    `}
+
+/>
+
+### Valid response
+
+###### Body
+The function returns three arguments:
+
+- **total_created**: The number of the requests that were sent
+- **total_sent**: The number of the requests that were created
+- **failed**: The number of the requests that were failed during creation
+
+###### Status
+200 OK
+
+### Exception response
+
+###### Body
+
+- error: _error exception message_
+
+###### Status
+500 internal server error

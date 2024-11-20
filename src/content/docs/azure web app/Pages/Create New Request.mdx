@@ -1,0 +1,23 @@
+---
+title: Create New Request
+---
+
+import { Image } from 'astro:assets';
+import createNewRequestPage from '../../../../assets/create new request page.png'; // Image is 1600x900
+import { FileTree } from "@astrojs/starlight/components";
+
+<FileTree>
+- routes
+  - **_user.create-new-request.tsx**
+  - ...
+  - **admin.create-new-request.tsx**
+</FileTree>
+
+<Image src={createNewRequestPage} alt={"Create New Request"}/>
+
+### Page Features
+- Create new request by filling the form.
+- Display the requests that were created in a table.
+- Update or delete the request before submitting it.
+- Submit the requests by clicking on the "Submit" button.
+

@@ -1,0 +1,88 @@
+---
+title: Authorization
+description: A guide in my new Starlight docs site.
+---
+
+import { Code, FileTree } from "@astrojs/starlight/components";
+
+**Description:** Checks if the request's origin is an authorized source and returns a token.
+
+<FileTree>
+- routes
+  - **api.authorization.ts**
+</FileTree>
+
+## Expected input
+
+---
+
+request type Request contains formData of clientId, clientSecret and scope
+
+<Code
+  title="Authorization Api Request Json"
+  lang="json"
+  code={`
+    {
+      "clientId": number,
+      "clientSecret": string,
+      "scope": string,
+    }
+    `}
+/>
+
+## Expected return
+
+---
+
+
+### Valid response
+<Code
+  title="Authorization Api Valid Response"
+  lang="python"
+  code={`
+        return json(
+        {
+            access_token: apiToken.token,
+            token_type: 'Bearer',
+            expires_in: expiresIn,
+            scope: scope,
+        },
+            { status: 200 },
+        );
+    `}
+
+/>
+
+###### Body
+The function returns a json that contains four arguments:
+
+- **access_token**: The authorization token
+- **token_type**: The type of the token
+- **expires_in**: the expiration time of the token
+- **scope**: scope
+
+
+###### Status
+200 OK
+
+### Exception response
+<Code
+  title="Authorization Api Exception response"
+  lang="python"
+  
+  code={`
+        const isAuthorized = await getApiUserAuthorization(
+        clientId,
+        clientSecret,
+        scope,
+        );
+        if (!isAuthorized) return json({ error: 'Invalid' }, { status: 401 });
+    `}
+
+/>
+###### Body
+
+- error: _error exception message_
+
+###### Status
+401 unauthorized

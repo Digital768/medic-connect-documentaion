@@ -1,0 +1,26 @@
+---
+title: Home
+---
+import { Image } from 'astro:assets';
+import homepage from '../../../../assets/homepage.png'; // Image is 1600x900
+import { FileTree } from "@astrojs/starlight/components";
+
+<FileTree>
+- routes
+    - **_user.home.tsx**
+    - **_user.home.$requestStatus.tsx**
+    - **_user.home.$requestStatus.$id.tsx**
+    - ...
+    - **admin.home.tsx**
+    - **admin.home.$requestStatus.tsx**
+    - **admin.home.$requestStatus.$id.tsx**
+</FileTree>
+
+<Image src={homepage} alt={"Home Page"}/>
+
+### Page Features
+- Display requests which their end date have not passed yet.
+- Display a specific request details when clicking on it.
+- Filter the requests by their status.
+- Filter the requests by their details - request dates, submitting dates, id and escort status (also hospital and the user that created the request if the user in an admin).
+

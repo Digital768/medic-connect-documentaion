@@ -1,0 +1,104 @@
+---
+title: Manual Answers
+description: A guide in my new Starlight docs site.
+---
+
+import { Code } from "@astrojs/starlight/components";
+
+**Type:** Http trigger.
+
+**Auth Level:** FUNCTION.
+
+**Description:** Updates answers provided manualy in the request body.
+
+<Code
+  title="Excel Request"
+  lang="python"
+  
+  code={`
+@app.route(route="manual-answers", auth_level=func.AuthLevel.FUNCTION)
+def manual_answers(req: func.HttpRequest) -> func.HttpResponse:
+    `}
+></Code>
+
+## Expected input
+
+---
+
+Req type func.HttpRequest contains body and timestamp
+
+<Code
+  title="Excel Request json"
+  lang="python"
+  
+  code={`
+   [
+    {
+        "requestId": number,
+        "permitSeqId": number,
+        "phoneNumber": string | null,
+        "purpose": number,
+        "destination": number,
+        "specificDestination": number,
+        "validFromDate": number,
+        "validEndDate": number,
+        "hourFrom": number,
+        "hourTo": number,
+        "lodging": number,
+        "passageLimit": number,
+        "vehicleSerialPlateNo": null,
+        "status": {
+            "code": number,
+            "reason": {
+                "code": number,
+                "remark": string,
+            }
+        },
+        "citizenId": number,
+        "daysOfWeek": [
+            number
+        ],
+        "gates": [],
+        "escortPermits": [],
+        "errors": []
+    }
+]
+    `}
+/>
+
+## Expected return
+
+---
+
+### Valid response
+
+###### Body
+
+<Code
+  title="valid response json"
+  lang="python"
+  
+  code={`
+  func.HttpResponse(f"{res.json()}", status_code=res.status_code)
+  `}
+/>
+
+###### Status
+
+200 OK
+
+### Exception response
+
+###### Body
+
+<Code
+  title="exception response json"
+  lang="python"
+  
+  code={`
+    Functions.utils_functions.logger.error(f"Sending failed {blob_name}")
+  `}
+/>
+
+###### Status
+response status code 

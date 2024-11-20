@@ -1,0 +1,79 @@
+---
+title: Create New Request
+description: A guide in my new Starlight docs site.
+---
+
+import { Code, FileTree } from "@astrojs/starlight/components";
+
+**Description:** Creates new hospital request in the db.
+
+<FileTree>
+- routes
+  - **api.create-new-request.ts**
+</FileTree>
+
+## Expected input
+
+---
+
+request type Request contains formData of a hospital request
+
+<Code
+  title="Create Request Api Request Json"
+  lang="json"
+  code={`
+    {
+        "newHospitalRequest": HospitalRequest,
+        "citizenId": number,
+        "escortIds": number[],
+        "name": string | null,
+        "email": string | null,
+        "phoneNumber": string | null,
+        "userId": number,
+        "hospitalId": number,
+    }
+    `}
+/>
+
+## Expected return
+
+---
+<Code
+  title="Create Request Api Response"
+  lang="python"
+  code={`
+     try {
+        const res = await createHospitalRequest(
+            newHospitalRequest as never as HospitalRequest,
+            citizenId,
+            escorts,
+            name,
+            email,
+            phoneNumber,
+            userId,
+            hospitalId,
+        );
+        console.log('created -', res);
+        } catch (error) {
+            console.log('error', error);
+            return json({ error }, { status: 500 });
+        }
+    `}
+/>
+
+### Valid response
+
+
+###### Body
+
+###### Status
+
+### Exception response
+
+###### Body
+
+- error: _error exception message_
+
+###### Status
+
+500 internal server error

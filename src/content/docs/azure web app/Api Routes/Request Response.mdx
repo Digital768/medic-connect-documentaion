@@ -1,0 +1,74 @@
+---
+title: Request Response
+description: A guide in my new Starlight docs site.
+---
+
+import { Code, FileTree } from "@astrojs/starlight/components";
+
+**Description:** This api updates request response from even.
+
+<FileTree>
+- routes
+  - **api.request-response.ts**
+</FileTree>
+
+
+## Expected input
+
+---
+
+request type Request contains formData of responses array recieved from <a target="_blank" href = '/function-app/functions/get-requests-from-even/'> get requests from even</a> in the function app.
+<Code
+  title="Request Response Api Request Json"
+  lang="json"
+  code={`
+    {
+        "requestResponseSchemaArray" = requestResponse[]
+    }
+    `}
+/>
+
+
+## Expected return
+
+---
+
+<Code
+  title="Request Response Api Response"
+  lang="python"
+  
+  code={`
+    try {
+        const updateErrors = (await Promise.all(updatePromises)).filter(
+        (updatePromises) => updatePromises,
+    );
+    if (updateErrors.length > 0) {
+      console.error('errors', updateErrors);
+      return json(
+        { message: 'Updated with errors', error: updateErrors },
+        { status: 200 },
+      );
+    }
+    return json({ message: 'Updated Successfuly.' }, { status: 200 });
+    } catch (error) {
+    return json({ message: 'Server Error', error }, { status: 500 });
+  }
+`}
+
+/>
+
+### Valid response
+
+###### Body
+
+###### Status
+
+200 OK
+
+### Exception response
+
+###### Body
+
+###### Status
+
+500 internal server error

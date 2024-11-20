@@ -1,0 +1,48 @@
+---
+title: Getting Started
+description: A guide in my new Starlight docs site.
+sidebar:
+  order: 1
+---
+
+import { Code, Steps } from "@astrojs/starlight/components";
+import cloneProject from "../../../assets/clone_project.png"; // Image is 1600x900
+import cloneInVsCode from "../../../assets/clone_in_vs_code.png"; // Image is 1600x900
+import pipeLineSidebar from "../../../assets/pipelines-sidebar.png"; // Image is 1600x900
+import pipeLineList from "../../../assets/pipeline_list.png"; // Image is 1600x900
+import runPipelineButton from "../../../assets/run_pipeline_button.png"; // Image is 1600x900
+import pipelineSelectBranch from "../../../assets/pipeline_select_branch.png"; // Image is 1600x900
+import { Image } from "astro:assets";
+
+## Get code from azure
+
+<Steps>
+1.  Open <a target='_blank' href="https://dev.azure.com/even-matpash/hospital-interface/_git/hospital-interface">hospital-interface repository</a> in azure.
+
+2. Click the clone button at the top right of the page clone the code to the local computer. <Image src={cloneProject} alt={"Reports Page"}/>
+
+3. Click Clone in VS Code. <Image src={cloneInVsCode} alt={"Reports Page"}/>
+
+4. Open the project in the local computer.
+
+</Steps>
+
+## Running the code
+
+To run the code locally press Ctrl + F5 and send a request with Postman.
+
+## Deployment
+
+<Steps>
+1. Push changes the the azure repository.
+
+2. In the 
+<a target='_blank' href="https://dev.azure.com/even-matpash/hospital-interface">azure devops</a> <Image src={pipeLineSidebar} alt={"Reports Page"}/>
+
+3. Select the appropriate backend - python pipeline. <Image src={pipeLineList} alt={"Reports Page"}/>
+
+4. Click the run pipeline button. <Image src={runPipelineButton} alt={"Reports Page"}/>
+
+5. Select the appropriate branch and click the Run button at the bottom right. <Image src={pipelineSelectBranch} alt={"Reports Page"}/>
+
+</Steps>

@@ -1,0 +1,25 @@
+---
+title: History
+---
+import { Image } from 'astro:assets';
+import historypage from '../../../../assets/historypage.png'; // Image is 1600x900
+import { FileTree } from "@astrojs/starlight/components";
+
+<FileTree>
+- routes
+    - **_user.history.tsx**
+    - **_user.history.$requestStatus.tsx**
+    - **_user.history.$requestStatus.$id.tsx**
+    - ...
+    - **admin.history.tsx**
+    - **admin.history.$requestStatus.tsx**
+    - **admin.history.$requestStatus.$id.tsx**
+</FileTree>
+
+<Image src={historypage} alt={"History Page"}/>
+
+### Page Features
+- Display requests which their end date have already passed.
+- Display a specific request details when clicking on it.
+- Filter the requests by their status.
+- Filter the requests by their details - request dates, submitting dates, id and escort status (also hospital and the user that created the request if the user in an admin).

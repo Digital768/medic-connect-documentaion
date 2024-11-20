@@ -1,0 +1,132 @@
+---
+title: Send to Even
+description: A guide in my new Starlight docs site.
+---
+
+import { Code } from "@astrojs/starlight/components";
+
+**Type:** Http trigger.
+
+**Auth Level:** FUNCTION.
+
+**Description:** Sends the request to even through open gov
+
+<Code
+  title="Send to Even"
+  lang="python"
+  
+  code={`
+@app.route(route="send-to-even", auth_level=func.AuthLevel.FUNCTION)
+def send_to_even(req: func.HttpRequest) -> func.HttpResponse:
+    `}
+></Code>
+
+## Expected input
+
+---
+
+req type func.HttpRequest contains hospital request json
+
+<Code
+  title="Excel Request json"
+  lang="json"
+  
+  code={`
+    {
+       "permitCitizensDetails": "number",
+        "requestId": "number",
+        "fromDate": "Date",
+        "endDate": "Date",
+        "hourFrom": "number",
+        "hourTo": "number",
+        "destination": "number",
+
+        // added default data:
+        "requestSource": 32,
+        "entranceFrom": 2,
+        "purpose": 85,
+        "matak": 101,
+        "vehicleSerialPlate": None,
+        "gates": [160, 2380, 3000],
+        "remark": None,
+        "attachments": None,
+    }
+    `}
+
+/>
+
+## Expected return
+
+---
+
+<Code
+  title="Excel Request response"
+  lang="python"
+  
+  code={`
+       try:
+        with Functions.utils_functions.tracer.span(name="send_to_even") as span:
+            resp = opengov_request_connection(
+                payload, Functions.utils_functions.service_url
+            )
+        if resp.code == 200:
+            blob_content = json.dumps(hospital_request)
+            blob_name = f'{hospital_request.get("permitCitizensDetails")[0]["citizenDetails"]["citizenId"]}-{hospital_request.get("requestId")}-{datetime.datetime.now().isoformat()}.json'
+            create_blob_in_storage(
+                file_bytes=blob_content,
+                container_name=Functions.utils_functions.COMPLETED_CONTAINER_NAME,
+                blob_name=blob_name,
+                connection_string=Functions.utils_functions.SENT_AZURE_CONTAINER,
+            )
+            return func.HttpResponse(
+                f"success for {blob_name}",
+                status_code=200,
+            )
+        else:
+            blob_content = json.dumps(hospital_request)
+            blob_name = f'{hospital_request.get("permitCitizensDetails")[0]["citizenDetails"]["citizenId"]}-{hospital_request.get("requestId")}-{datetime.datetime.now().isoformat()}.json'
+            create_blob_in_storage(
+                file_bytes=blob_content,
+                container_name=Functions.utils_functions.FAILED_SENDING_CONTAINER_NAME,
+                blob_name=blob_name,
+                connection_string=Functions.utils_functions.SENT_AZURE_CONTAINER,
+            )
+        return func.HttpResponse(
+            f"failed sending for {blob_name}, reason: {resp.read()}",
+            status_code=resp.code,
+        )
+        except Exception as e:
+            blob_content = json.dumps(hospital_request)
+            blob_name = f'{hospital_request.get("permitCitizensDetails")[0]["citizenDetails"]["citizenId"]}-{hospital_request.get("requestId")}-{datetime.datetime.now().isoformat()}.json'
+            create_blob_in_storage(
+                file_bytes=blob_content,
+                container_name=Functions.utils_functions.FAILED_SENDING_CONTAINER_NAME,
+                blob_name=blob_name,
+                connection_string=Functions.utils_functions.SENT_AZURE_CONTAINER,
+            )
+            Functions.utils_functions.logger.error("error in", blob_name)
+            Functions.utils_functions.logger.error(msg=e)
+            raise
+    `}
+
+/>
+
+### Valid response
+
+###### Body
+
+return success with the created blob name
+
+###### Status
+
+200 OK
+
+### Exception response
+
+###### Body
+
+returns failed sending with the blob name
+
+###### Status
+
+response status code

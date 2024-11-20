@@ -1,0 +1,164 @@
+---
+title: Database
+sidebar:
+  order: 2
+---
+
+import { Code, CardGrid, Card, Aside, FileTree } from "@astrojs/starlight/components";
+
+
+<FileTree>
+- prisma
+  - **schema.prisma**
+  - ...
+  - **seed.ts**
+
+</FileTree>
+
+
+## Schema
+
+The schema is built with <a href = "https://www.prisma.io/" target="_blank">prisma client</a>. 
+
+**Open schema**: Run "npx prisma studio" to run the database on port 5555.
+
+
+**Update schema**: Change the schema.prisma file and run "npx migrate dev" (if not working delete the client direcory in prisma and run again).
+
+
+<Code
+  title="Prisma Schema"
+  lang="json"
+  code={`
+    {
+      model User {
+      id         Int               @id @default(autoincrement())
+      ip         String?           // the ip that the user is connected to
+      email      String            @unique
+      password   String
+      name       String
+      role       Role              @default(USER) // the role of the user (ADMIN/USER/SYSTEM-ADMIN)
+      Hospital   Hospital?         @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+      hospitalId Int?              // the hospital id that the user is connected to
+      Request    HospitalRequest[] // the requests that were created by the user
+      disabled   Boolean           @default(false)  // disabled the user when true (for unrelevant users)
+      isEditor   Boolean           @default(false)  // enables the user to create requests when true
+      secret     String            // used for generating code for 2 factor authentication
+      sessions   Session[]         // user session for 2 factor authentication
+      iv         Bytes             // used for generating code for 2 factor authentication
+    }
+
+    model Session {
+      id             String   @id @default(cuid())
+      expirationDate DateTime
+      createdAt DateTime @default(now())
+      updatedAt DateTime @updatedAt
+      user   User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+      userId Int
+    }
+
+    model Hospital {
+      id                 Int               @id @default(autoincrement())
+      hospitalCode       Int               @unique
+      hebrewHospitalName String            @unique
+      arabicHospitalName String            @unique
+      User               User[]            // the users that are connected to the hospital
+      HospitalRequest    HospitalRequest[] // the requests that were created for the hospital 
+    }
+
+    model Citizen {
+      id                Int             @id @default(autoincrement())
+      createdAt         DateTime        @default(now())
+      updatedAt         DateTime        @updatedAt
+      citizenId         Int
+      name              String?
+      email             String?
+      phoneNumber       String?
+      permitId          BigInt?
+      requestStatusCode Int?
+      rejectingCode     Int?
+      rejectingRemark   String?
+      Request           HospitalRequest @relation(fields: [requestId], references: [id], onDelete: Cascade) 
+      requestId         Int  // the request that the citizen is assigned to
+      purpose           Int  // 85 - patient, 86 - escort
+
+      // the combination of citizenId and requestId is unique 
+      @@unique([citizenId, requestId])
+      @@index([requestStatusCode], name: "idx_requestStatusCode")
+      @@index([createdAt], name: "idx_createdAt")
+    }
+
+    model HospitalRequest {
+      id                     Int       @id @default(autoincrement())
+      createdAt              DateTime  @default(now())
+      updatedAt              DateTime  @updatedAt
+      treatmentType          String
+      fromDate               DateTime
+      endDate                DateTime
+      hourFrom               Int
+      hourTo                 Int
+      numberOfPassageCode    Int
+      User                   User      @relation(fields: [userId], references: [id])
+      sentDate               DateTime?
+      retryCounter           Int       @default(0)
+      Citizens               Citizen[] // the citizens that are connected to the request - patinet and escorts
+      userId                 Int
+      Hospital               Hospital  @relation(fields: [hospitalId], references: [id])
+      hospitalId             Int  // the hospital that is connected to the request
+      isPermitDetailsChanged Boolean   @default(false) // true if even has chaged the request details
+    }
+
+    enum Role {
+      USER
+      ADMIN
+      SYSTEM_ADMIN
+    }
+
+    // not in use
+    model Variable {
+      id    Int    @id @default(autoincrement())
+      key   String @unique
+      value String
+    }
+
+    model ApiUser {
+      clientId     String  // the id of the request sender
+      clientSecret String  // used for creating the token
+      scope        String
+
+      @@unique([clientId, clientSecret, scope])
+    }
+
+    model ApiToken {
+      id      Int      @id @default(autoincrement())
+      token   String   // the token text
+      expires DateTime
+    }
+
+    model WhiteList {
+      id  Int    @id @default(autoincrement())
+      ip  String  // the authorized ip 
+      route String   // the route that the ip is authorized for 
+    }
+  }
+  `}
+/>
+
+
+## Models 
+- User: represents a user in the app.   
+- Session: represents a session for signing in. 
+- Hospital: represents a hospital in the app. 
+- Citizen: represents a citizen in a request. 
+- HospitalRequest: represents a request for a hospital. 
+- ApiUser: used for api sender authorization. 
+- ApiToken: represents an authorization token for access to an api. 
+- WhiteList: represents an authorizend ip for an api. 
+
+
+
+## Seed
+
+The seed contains the default data for the database.
+
+**Run Seed file**: Run "npx prisma db seed" to seed the default data in the db.
