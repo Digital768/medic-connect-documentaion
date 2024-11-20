@@ -1,0 +1,82 @@
+---
+title: Retry Requests Sending Timer
+description: A guide in my new Starlight docs site.
+---
+
+import { Code } from "@astrojs/starlight/components";
+
+**Type:** Timer trigger.
+
+**Auth Level:** -
+
+**Description:** Sends to even the requests that failed during sending
+
+<Code
+  title="Retry Requests Sending Timer"
+  lang="python"
+  
+  code={`
+  @app.function_name(name="retry_requests_sending_timer")
+  @app.schedule(schedule="*/30 * * * * *", arg_name="timer", run_on_startup=False)
+  def retry_requests_sending_timer(timer: func.TimerRequest) -> None:
+    `}
+/>
+
+## Expected input
+
+---
+
+## Expected return
+
+---
+
+<Code
+  title="Valid Response"
+  lang="python"
+  
+  code={`
+       try:
+        # send request
+        response = send_request_to_even(parsed_hospital_request)
+        logger.info(f"response code {response.code}")
+
+        if response.code == 200:
+            # update send date if successful
+            res = handle_successfull_response(db, request_id)
+            logger.info(f"Request {request_id} sent {response.code}")
+            return res
+        else:
+            # add to retry if unsuccessful
+            retry_count = hospital_request.retryCounter
+            res = handle_failed_response(db, request_id, retry_count)
+            logger.info(f"Request {request_id} sent {response.code}")
+            return res
+
+    except Exception as e:
+        logger.error(f"Error sending request to even: {e}")
+        retry_count = hospital_request.retryCounter
+        res = handle_failed_response(db, request_id, retry_count)
+        logger.info(f"Request {request_id} failed due to server error")
+        return None
+    `}
+/>
+
+### Valid response
+
+###### Body
+
+return success with the request id and updates the request sent date
+
+###### Status
+
+200 OK
+
+### Exception response
+
+###### Body
+
+returns failed sending request id and increase the request retry counter by 1
+
+###### Status
+
+response status code 

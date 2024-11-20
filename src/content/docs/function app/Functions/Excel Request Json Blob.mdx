@@ -1,0 +1,55 @@
+---
+title: Excel Request Blob Json
+description: A guide in my new Starlight docs site.
+---
+
+import { Code } from "@astrojs/starlight/components";
+
+**Type:** Blob trigger.
+
+**Auth Level:** FUNCTION.
+
+**Description:** Creates requests from excel blob in the storage.
+
+<Code
+  title="Excel Request Blob Json"
+  lang="python"
+  code={`
+    @app.blob_trigger(
+        arg_name="excelRequestsJsonBlob",
+        path="excel-requests-json/{name}",
+        connection="AZURE_STORAGE_EXCELS",
+    )
+    def excelRequestsJsonBlob(excelRequestsJsonBlob: func.InputStream):
+    `}
+></Code>
+
+## Expected input
+
+---
+
+This function does not recieve any input
+
+## Expected return
+
+---
+
+This function does not return anything.
+
+### Valid response
+
+###### Body
+
+###### Status
+
+200 OK
+
+### Exception response
+
+###### Body
+
+- error: _error exception message_
+
+###### Status
+
+500 internal server error
