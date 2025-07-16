@@ -35,37 +35,55 @@ import { Code } from "@astrojs/starlight/components";
   lang="python"
   
   code={`
-       try:
-        # send request
-        response = send_request_to_even(parsed_hospital_request)
-        logger.info(f"response code {response.code}")
+    try :
+      # send patient response
+      if response.code == SUCCESS_RESPONSE_CODE:
+          update_even_recieved_response(response, db, request_id)
 
-        if response.code == 200:
-            # update send date if successful
-            res = handle_successfull_response(db, request_id)
-            logger.info(f"Request {request_id} sent {response.code}")
-            return res
-        else:
-            # add to retry if unsuccessful
-            retry_count = hospital_request.retryCounter
-            res = handle_failed_response(db, request_id, retry_count)
-            logger.info(f"Request {request_id} sent {response.code}")
-            return res
+          # if there are escorts - send them
+          if hospital_request.Citizens and any(
+              citizen.purpose == PURPOSE_ESCORT
+              for citizen in hospital_request.Citizens
+          ):
+              handle_escort_send(
+                  hospital_request_dict, db, request_id, hospital_request.retryCounter
+              )
+          else:
+              logger.info("No escorts found")
 
+
+      # handle failed sending
+      else:
+          retry_count = hospital_request.retryCounter
+
+          try:
+              error_status = response["status"]
+              error_data = ", ".join(response["errors"])
+          except Exception as parse_error:
+              error_status = response.code
+              error_data = f"HTTP {response.code}"
+
+          res = handle_failed_response(
+              db, request_id, retry_count, error_status, error_data
+          )
+          logger.info(f"Request {request_id} failed with code {response.code}")
+          return res
+
+    # handle server error
     except Exception as e:
-        logger.error(f"Error sending request to even: {e}")
         retry_count = hospital_request.retryCounter
-        res = handle_failed_response(db, request_id, retry_count)
+        res = handle_failed_response(db, request_id, retry_count, 500, str(e))
         logger.info(f"Request {request_id} failed due to server error")
         return None
     `}
+
 />
 
 ### Valid response
 
 ###### Body
 
-return success with the request id and updates the request sent date
+returns success with the request id, and updates the request sent date and the citizens permitId
 
 ###### Status
 

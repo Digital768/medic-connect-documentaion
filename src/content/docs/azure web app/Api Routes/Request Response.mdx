@@ -5,7 +5,7 @@ description: A guide in my new Starlight docs site.
 
 import { Code, FileTree } from "@astrojs/starlight/components";
 
-**Description:** This api updates request response from even.
+**Description:** This api updates request response from even and updates the reports data table.
 
 <FileTree>
 - routes
@@ -17,14 +17,77 @@ import { Code, FileTree } from "@astrojs/starlight/components";
 
 ---
 
-request type Request contains formData of responses array recieved from <a target="_blank" href = '/function-app/functions/get-requests-from-even/'> get requests from even</a> in the function app.
+request type Request contains formData of array of responses array recieved directly from even.
+
+#### Response example
 <Code
   title="Request Response Api Request Json"
   lang="json"
   code={`
-    {
-        "requestResponseSchemaArray" = requestResponse[]
-    }
+    [{ 
+    "permitId": 905421854, 
+    "citizenInfo": { 
+      "citizenId": 100000777, 
+      "squareName": "נוי ניסיון לביא" 
+    }, 
+    "status": { 
+      "code": 14, 
+      "value": "מסורב" 
+      "reason": { 
+        "code": 13 
+        "value": "חסרים מסמכים" 
+      }, 
+    }, 
+    "purpose": { 
+      "code": 85, 
+      "value": "ליווי חולה" 
+    }, 
+    "type": { 
+      "code": 12, 
+      "value": "ליווי" 
+    }, 
+    "entranceFrom": { 
+      "code": 2, 
+      "value": "איו''ש" 
+    }, 
+    "destination": { 
+      "code": 100, /*יעד או יעד מדויק*/ 
+      "value": "בית חולים אסותא אשדוד" 
+    }, 
+    "startDate": "2023-10-23", 
+    "endDate": "2023-10-30", 
+    "startTime": 6, 
+    "endTime": 13, 
+    "daysOfWeek": [1,2,3,4,5,6], 
+    "mounted": { 
+      "code": 1, 
+      "value": "שאטל" 
+    }, 
+    "drive": { 
+      "licensePlate": "12584H", 
+      "isIsraeliVehicle": true 
+    }, 
+    "lodging": { 
+      "code": 1, 
+      "value": "לינה בישראל" 
+    }, 
+    "entranceLimit": 5, 
+    "eilatIncluded": false, 
+
+    "sites": [214235367], 
+
+    "visitedPerson": { 
+      "personId": 100000777, 
+    }, 
+    "escortedIsraeli": { 
+      "israeliId": 325004266, 
+    }, 
+    "escortedPalestinian": { 
+      "palestinianId": 100000777 
+      "permitId": 905421854 
+    }, 
+    "updateTime": 2021-04-24T14:33:48 
+  }] 
     `}
 />
 
